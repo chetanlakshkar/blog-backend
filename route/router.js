@@ -1,7 +1,7 @@
 const express=require("express");
 const mongoose=require("mongoose");
 const router=express.Router();
-
+const bcrypt = require("bcrypt");
 require("../database/db.js");
 const User = require("../model/userSchema");
 
@@ -38,6 +38,44 @@ router.get("/about", (req, res) => {
       }
     } catch (error) {
       res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  });
+
+  router.post("/login", async (req, res) => {
+    try {
+      let { email, password } = req.body;
+  
+      let login = await User.findOne({ email: email });
+      if (login) {
+        const IsMatch = await bcrypt.compare(password, login.password);
+  
+        if (IsMatch) {
+          // let payload = {
+          //   id: login._id,
+          //   email: login.email,
+          // };
+          // let token = await json.generateAuthToken(payload);
+          // console.log(token, "token");
+          res.json({
+            status: 200,
+            success: true,
+            message: "login sccessfull ",
+           data:login
+          });
+        } else {
+          res.json({
+            status: 400,
+            success: false,
+            message: "login unsccessful",
+          });
+        }
+      }
+    } catch (error) {
+      res.json({
+        status: 400,
         success: false,
         message: error.message,
       });

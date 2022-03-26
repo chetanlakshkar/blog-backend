@@ -2,6 +2,7 @@ const  express =require("express");
 const router = require("./route/router.js");
 const app=express();
 PORT=8000;
+app.use(express.json());
 require("./database/db.js")
 app.use(require("./route/router.js"))
 app.use('/api/users/signup',router)
